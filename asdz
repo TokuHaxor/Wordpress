@@ -1,0 +1,7 @@
+command -v python >/dev/null \
+    && exec python -c 'import pty; pty.spawn("bash")' \
+    || exec script -qc bash /dev/null
+export SHELL=/bin/bash TERM=xterm-256color
+reset -I
+PS1='\[\033[36m\]\u\[\033[m\]@\[\033[32m\]\h:\[\033[33;1m\]\w\[\033[m\]\$ '
+stty -echo;printf "\033[18t";read -rdt R;stty sane $(echo "$R"|awk -F";" '{ printf "rows "$3" cols "$2; }')
